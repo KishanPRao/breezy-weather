@@ -323,6 +323,13 @@ class SettingsManager private constructor(context: Context) {
         }
         get() = config.getBoolean("trend_horizontal_line_switch", true)
 
+    var isSwipeLocationEnabled: Boolean
+        set(value) {
+            config.edit().putBoolean("swipe_location_switch", value).apply()
+            notifySettingsChanged()
+        }
+        get() = config.getBoolean("swipe_location_switch", true)
+
     var backgroundAnimationMode: BackgroundAnimationMode
         set(value) {
             config.edit().putString("background_animation_mode", value.id).apply()

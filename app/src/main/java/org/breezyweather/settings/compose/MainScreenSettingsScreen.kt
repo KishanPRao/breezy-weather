@@ -125,6 +125,17 @@ fun MainScreenSettingsScreen(
                 },
             )
         }
+        switchPreferenceItem(R.string.settings_main_enable_swipe_location) { id ->
+            SwitchPreferenceView(
+                titleId = id,
+                summaryOnId = R.string.settings_enabled,
+                summaryOffId = R.string.settings_disabled,
+                checked = SettingsManager.getInstance(context).isSwipeLocationEnabled,
+                onValueChanged = {
+                    SettingsManager.getInstance(context).isSwipeLocationEnabled = it
+                },
+            )
+        }
         sectionFooterItem(R.string.settings_main_section_options)
 
         sectionHeaderItem(R.string.settings_main_section_animations)

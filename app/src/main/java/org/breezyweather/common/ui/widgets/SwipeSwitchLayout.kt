@@ -58,6 +58,7 @@ class SwipeSwitchLayout @JvmOverloads constructor(
     private var mIsBeingDragged = false
     private var mIsHorizontalDragged = false
     private var mIsBeingNestedScrolling = false
+    var isSwipeLocationEnabled = true
 
     interface OnSwitchListener {
         fun onSwiped(swipeDirection: Int, progress: Float)
@@ -82,6 +83,9 @@ class SwipeSwitchLayout @JvmOverloads constructor(
 
     // touch.
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if (!isSwipeLocationEnabled) {
+            return super.onInterceptTouchEvent(ev)
+        }
         if (!isEnabled || ev.action != MotionEvent.ACTION_DOWN && mIsBeingNestedScrolling) {
             return false
         }
@@ -129,6 +133,9 @@ class SwipeSwitchLayout @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if (!isSwipeLocationEnabled) {
+            return super.onTouchEvent(ev)
+        }
         if (!isEnabled || mIsBeingNestedScrolling) return false
         if (mTarget == null && childCount > 0) {
             mTarget = getChildAt(0)
@@ -179,6 +186,9 @@ class SwipeSwitchLayout @JvmOverloads constructor(
     }
 
     private fun setTranslation(triggerDistance: Int, translateRatio: Float) {
+        if (!isSwipeLocationEnabled) {
+            return
+        }
         val realDistance = mSwipeDistance
             .coerceAtMost(triggerDistance)
             .coerceAtLeast(-triggerDistance)
@@ -208,6 +218,9 @@ class SwipeSwitchLayout @JvmOverloads constructor(
     }
 
     private fun release(triggerDistance: Int) {
+        if (!isSwipeLocationEnabled) {
+            return
+        }
         val swipeDirection = if (mSwipeDistance < 0) SWIPE_DIRECTION_LEFT else SWIPE_DIRECTION_RIGHT
         if (abs(mSwipeDistance) > abs(triggerDistance)) {
             position = swipeDirection
@@ -265,6 +278,9 @@ class SwipeSwitchLayout @JvmOverloads constructor(
 
     // nested scrolling parent.
     override fun onStartNestedScroll(child: View, target: View, axes: Int, type: Int): Boolean {
+        if (!isSwipeLocationEnabled) {
+            return true
+        }
         if (mTarget == null && childCount > 0) {
             mTarget = getChildAt(0)
         }
@@ -290,6 +306,9 @@ class SwipeSwitchLayout @JvmOverloads constructor(
     }
 
     override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray, type: Int) {
+        if (!isSwipeLocationEnabled) {
+            return
+        }
         if (mSwipeDistance != 0) {
             if (mSwipeDistance > 0 && mSwipeDistance - dx < 0 || mSwipeDistance < 0 && mSwipeDistance - dx > 0) {
                 consumed[0] = mSwipeDistance
@@ -305,6 +324,9 @@ class SwipeSwitchLayout @JvmOverloads constructor(
         dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
         type: Int, consumed: IntArray
     ) {
+        if (!isSwipeLocationEnabled) {
+            return
+        }
         innerNestedScroll(dxUnconsumed)
         consumed[0] += dxUnconsumed
     }
@@ -314,11 +336,17 @@ class SwipeSwitchLayout @JvmOverloads constructor(
         dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
         type: Int
     ) {
+        if (!isSwipeLocationEnabled) {
+            return
+        }
         innerNestedScroll(dxUnconsumed)
     }
 
     override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
-        return false
+        if (!isSwipeLocationEnabled) {
+            return false
+        }
+        return super.onNestedPreFling(target, velocityX, velocityY)
     }
 
     override fun onNestedFling(

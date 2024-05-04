@@ -305,6 +305,9 @@ class HomeFragment : MainModuleFragment() {
 
         updateDayNightColors()
 
+        binding.switchLayout.isSwipeLocationEnabled = SettingsManager
+            .getInstance(requireContext())
+            .isSwipeLocationEnabled
         binding.switchLayout.reset()
 
         if (location?.weather == null) {
